@@ -9,12 +9,11 @@ ALLOWED_ERROR = 0.1
 NUM_OF_INT = 6  # 번호판 숫자의 개수
 
 def preprocess_image(image_path):
-    """이미지를 읽고 그레이스케일 및 이진화 처리"""
+    """이미지를 읽고 검정색만 남겨 이진화 처리"""
     img = cv2.imread(image_path)
     if img is None:
         raise FileNotFoundError(f"이미지 파일을 불러올 수 없습니다: {image_path}")
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    _, binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY_INV)
+    binary = cv2.inRange(img,np.array([0,0,0]), np.array([30,30,30]))
     return img, binary
 
 def find_contours(binary_img):
@@ -99,6 +98,5 @@ def main():
     extracted_texts = extract_text_from_boxes(img, grouped_boxes)
     for text in extracted_texts:
         print(f'추출된 텍스트: {text}')
-
 if __name__ == "__main__":
     main()
